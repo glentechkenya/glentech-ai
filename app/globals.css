@@ -1,0 +1,82 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #05070c;
+  color: #e5e7eb;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* CHAT BACKGROUND */
+.chat-bg {
+  background-image: url("/chat-bg.svg");
+  background-size: auto;
+}
+
+/* NEON TEXT */
+.neon {
+  color: #22f5ff;
+  text-shadow:
+    0 0 5px #22f5ff,
+    0 0 10px #22f5ff,
+    0 0 20px #0ff;
+}
+
+/* LOADER */
+.loader {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #020617, #000);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* CIRCLES */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  animation: spin 5s linear infinite;
+}
+
+.circle.one {
+  width: 140px;
+  height: 140px;
+  border-color: #22f5ff;
+  animation-direction: normal;
+}
+
+.circle.two {
+  width: 220px;
+  height: 220px;
+  border-color: #a855f7;
+  animation-direction: reverse;
+}
+
+.circle.three {
+  width: 300px;
+  height: 300px;
+  border-color: #22c55e;
+  animation-direction: normal;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* TYPE EFFECT */
+.typing span {
+  opacity: 0;
+  animation: glow 0.3s forwards;
+}
+
+@keyframes glow {
+  from { opacity: 0; filter: blur(4px); }
+  to   { opacity: 1; filter: blur(0); }
+}
