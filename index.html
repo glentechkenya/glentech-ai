@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GlennTech AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="app">
+  <div class="header">
+    <span class="status-dot"></span>
+    <span class="sys">GLENNTECH AI — ONLINE</span>
+  </div>
+
+  <div class="chat" id="chat">
+    <div class="msg ai">
+      <strong>AI:</strong> System initialized. How can I assist you?
+    </div>
+  </div>
+
+  <div class="input-box">
+    <input id="input" placeholder="Type a command..." />
+    <button onclick="send()">SEND</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
