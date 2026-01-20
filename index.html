@@ -14,21 +14,28 @@
 <canvas id="particles"></canvas>
 
 <div class="app">
-  <div class="header">
-    <span class="status-dot"></span>
-    <span class="sys">GLENNTECH AI — ONLINE</span>
-  </div>
 
-  <div class="chat" id="chat">
-    <div class="msg ai">
-      <strong>AI:</strong> System initialized. How can I assist you?
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">GLENNTECH<span> AI</span></div>
+    <div class="online">
+      <span class="dot"></span> ONLINE
     </div>
   </div>
 
-  <div class="input-box">
-    <input id="input" placeholder="Type a command..." />
-    <button onclick="send()">SEND</button>
+  <!-- CHAT -->
+  <div class="chat" id="chat">
+    <div class="msg ai">
+      <strong>AI:</strong> System online. Type <code>/help</code> to begin.
+    </div>
   </div>
+
+  <!-- INPUT -->
+  <div class="input-box">
+    <input id="input" placeholder="Type a command or message…" autocomplete="off">
+    <button id="send">SEND</button>
+  </div>
+
 </div>
 
 <script src="script.js"></script>
