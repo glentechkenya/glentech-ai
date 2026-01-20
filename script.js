@@ -22,56 +22,92 @@ p=Array.from({length:80},()=>({
   requestAnimationFrame(anim);
 })();
 
-/* ===== CHAT LOGIC ===== */
+/* ===== CHAT ===== */
 const chat=document.getElementById("chat");
 const input=document.getElementById("input");
+const sendBtn=document.getElementById("send");
 
-/*
-IMPORTANT:
-You will set your API key as an ENV variable:
-VITE_GEMINI_KEY or GEMINI_API_KEY
-*/
 const API_KEY = import.meta?.env?.VITE_GEMINI_KEY || "YOUR_API_KEY_HERE";
 const MODEL = "gemini-2.0-flash";
 
-function add(role,text){
+/* Conversation memory */
+let memory=[];
+
+function add(role,html){
   const d=document.createElement("div");
   d.className="msg "+role;
-  d.innerHTML=`<strong>${role==="ai"?"AI":"You"}:</strong> ${text}`;
+  d.innerHTML=html;
   chat.appendChild(d);
   chat.scrollTop=chat.scrollHeight;
+}
+
+function typingDots(){
+  return `<span class="typing">
+    <span>●</span><span>●</span><span>●</span>
+  </span>`;
+}
+
+/* Commands */
+function handleCommand(text){
+  if(text==="/clear"){
+    chat.innerHTML="";
+    memory=[];
+    add("ai","<strong>AI:</strong> Chat cleared.");
+    return true;
+  }
+  if(text==="/help"){
+    add("ai",`
+      <strong>AI:</strong><br>
+      <code>/help</code> – show commands<br>
+      <code>/clear</code> – clear chat
+    `);
+    return true;
+  }
+  return false;
 }
 
 async function send(){
   const text=input.value.trim();
   if(!text) return;
   input.value="";
-  add("user",text);
-  add("ai","Processing...");
+
+  add("user",`<strong>You:</strong> ${text}`);
+  if(handleCommand(text)) return;
+
+  const typingEl=document.createElement("div");
+  typingEl.className="msg ai";
+  typingEl.innerHTML=`<strong>AI:</strong> ${typingDots()}`;
+  chat.appendChild(typingEl);
+  chat.scrollTop=chat.scrollHeight;
+
+  memory.push({role:"user",parts:[{text}]});
 
   try{
-    const res = await fetch(
+    const res=await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
       {
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          contents:[{parts:[{text}]}]
-        })
+        body:JSON.stringify({contents:memory})
       }
     );
+    const data=await res.json();
+    typingEl.remove();
 
-    const data = await res.json();
-    chat.lastChild.remove();
+    const reply=data.candidates?.[0]?.content?.parts?.[0]?.text
+      || "No response.";
 
-    const reply =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "No response from model.";
+    memory.push({role:"model",parts:[{text:reply}]});
+    add("ai",`<strong>AI:</strong> ${reply}`);
 
-    add("ai",reply);
-
-  }catch(err){
-    chat.lastChild.remove();
-    add("ai","⚠️ System error. Check API key or network.");
+  }catch{
+    typingEl.remove();
+    add("ai","<strong>AI:</strong> ⚠️ System error. Check API key.");
   }
 }
+
+/* EVENTS */
+sendBtn.onclick=send;
+input.addEventListener("keydown",e=>{
+  if(e.key==="Enter") send();
+});
