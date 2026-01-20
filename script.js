@@ -1,65 +1,76 @@
-/* ===== PARTICLES ===== */
-const c=document.getElementById("particles"),x=c.getContext("2d");
-let w,h,p;
-function rs(){w=c.width=innerWidth;h=c.height=innerHeight}
-addEventListener("resize",rs);rs();
-p=Array.from({length:80},()=>({
-  x:Math.random()*w,y:Math.random()*h,
-  vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+1
+/* ================= PARTICLES ================= */
+const c = document.getElementById("particles");
+const x = c.getContext("2d");
+
+function resize(){
+  c.width = innerWidth;
+  c.height = innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+const particles = Array.from({length:80}, () => ({
+  x: Math.random()*c.width,
+  y: Math.random()*c.height,
+  vx:(Math.random()-.5)*0.4,
+  vy:(Math.random()-.5)*0.4,
+  r: Math.random()*2+1
 }));
-(function anim(){
-  x.clearRect(0,0,w,h);
+
+(function animate(){
+  x.clearRect(0,0,c.width,c.height);
   x.fillStyle="#00ffe1";
-  p.forEach(a=>{
-    a.x+=a.vx;a.y+=a.vy;
-    if(a.x<0||a.x>w)a.vx*=-1;
-    if(a.y<0||a.y>h)a.vy*=-1;
-    x.globalAlpha=.6;
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>c.width) p.vx*=-1;
+    if(p.y<0||p.y>c.height) p.vy*=-1;
+    x.globalAlpha=0.6;
     x.beginPath();
-    x.arc(a.x,a.y,a.r,0,Math.PI*2);
+    x.arc(p.x,p.y,p.r,0,Math.PI*2);
     x.fill();
   });
-  requestAnimationFrame(anim);
+  requestAnimationFrame(animate);
 })();
 
-/* ===== CHAT ===== */
-const chat=document.getElementById("chat");
-const input=document.getElementById("input");
-const sendBtn=document.getElementById("send");
+/* ================= CHAT ================= */
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("send");
 
-const API_KEY = import.meta?.env?.VITE_GEMINI_KEY || "YOUR_API_KEY_HERE";
+/* 🔑 PUT YOUR REAL GEMINI KEY HERE (TEMPORARY) */
+const API_KEY = "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";
 const MODEL = "gemini-2.0-flash";
 
-/* Conversation memory */
-let memory=[];
+let memory = [];
 
-function add(role,html){
-  const d=document.createElement("div");
-  d.className="msg "+role;
-  d.innerHTML=html;
+function add(role, html){
+  const d = document.createElement("div");
+  d.className = "msg " + role;
+  d.innerHTML = html;
   chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
+  chat.scrollTop = chat.scrollHeight;
 }
 
 function typingDots(){
-  return `<span class="typing">
-    <span>●</span><span>●</span><span>●</span>
-  </span>`;
+  return `
+    <span class="typing">
+      <span>●</span><span>●</span><span>●</span>
+    </span>`;
 }
 
 /* Commands */
 function handleCommand(text){
-  if(text==="/clear"){
-    chat.innerHTML="";
-    memory=[];
+  if(text === "/clear"){
+    chat.innerHTML = "";
+    memory = [];
     add("ai","<strong>AI:</strong> Chat cleared.");
     return true;
   }
-  if(text==="/help"){
+  if(text === "/help"){
     add("ai",`
       <strong>AI:</strong><br>
-      <code>/help</code> – show commands<br>
-      <code>/clear</code> – clear chat
+      /help – show commands<br>
+      /clear – clear chat
     `);
     return true;
   }
@@ -67,47 +78,50 @@ function handleCommand(text){
 }
 
 async function send(){
-  const text=input.value.trim();
+  const text = input.value.trim();
   if(!text) return;
-  input.value="";
 
-  add("user",`<strong>You:</strong> ${text}`);
+  input.value = "";
+  add("user", `<strong>You:</strong> ${text}`);
+
   if(handleCommand(text)) return;
 
-  const typingEl=document.createElement("div");
-  typingEl.className="msg ai";
-  typingEl.innerHTML=`<strong>AI:</strong> ${typingDots()}`;
-  chat.appendChild(typingEl);
-  chat.scrollTop=chat.scrollHeight;
+  const typing = document.createElement("div");
+  typing.className = "msg ai";
+  typing.innerHTML = `<strong>AI:</strong> ${typingDots()}`;
+  chat.appendChild(typing);
+  chat.scrollTop = chat.scrollHeight;
 
-  memory.push({role:"user",parts:[{text}]});
+  memory.push({ role:"user", parts:[{text}] });
 
   try{
-    const res=await fetch(
+    const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
       {
         method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({contents:memory})
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ contents: memory })
       }
     );
-    const data=await res.json();
-    typingEl.remove();
 
-    const reply=data.candidates?.[0]?.content?.parts?.[0]?.text
-      || "No response.";
+    const data = await res.json();
+    typing.remove();
 
-    memory.push({role:"model",parts:[{text:reply}]});
-    add("ai",`<strong>AI:</strong> ${reply}`);
+    const reply =
+      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No response from model.";
 
-  }catch{
-    typingEl.remove();
-    add("ai","<strong>AI:</strong> ⚠️ System error. Check API key.");
+    memory.push({ role:"model", parts:[{text: reply}] });
+    add("ai", `<strong>AI:</strong> ${reply}`);
+
+  }catch(err){
+    typing.remove();
+    add("ai","<strong>AI:</strong> ⚠️ API error or invalid key.");
   }
 }
 
 /* EVENTS */
-sendBtn.onclick=send;
-input.addEventListener("keydown",e=>{
-  if(e.key==="Enter") send();
+sendBtn.addEventListener("click", send);
+input.addEventListener("keydown", e=>{
+  if(e.key === "Enter") send();
 });
