@@ -22,7 +22,7 @@ async function sendMessage() {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": "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",
+        "Authorization": "Bearer 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",
         "Content-Type": "application/json",
         "HTTP-Referer": "https://glenai.local",
         "X-Title": "GlenAI"
