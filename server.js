@@ -9,10 +9,6 @@ app.use(express.static("public"));
 app.post("/api/chat", async (req, res) => {
   const { message } = req.body;
 
-  if (!message) {
-    return res.status(400).json({ error: "Message is required" });
-  }
-
   try {
     const response = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
@@ -25,40 +21,28 @@ app.post("/api/chat", async (req, res) => {
         },
         body: JSON.stringify({
           model: "google/gemini-2.5-flash-preview-09-2025",
-          max_tokens: 1024,
-          temperature: 0.7,
+          max_tokens: 800,
+          temperature: 0.8,
           messages: [
             {
               role: "system",
-              content: "You are GlenAI, a futuristic AI created by Glen Tech."
+              content:
+                "You are a smart, friendly futuristic AI assistant. Do NOT repeat your name. Do NOT mention GlenTech unless asked. Speak naturally like a human. Use emojis sometimes. Be concise but helpful. Format code inside triple backticks only."
             },
-            {
-              role: "user",
-              content: message
-            }
+            { role: "user", content: message }
           ]
         })
       }
     );
 
     const data = await response.json();
-
-    if (!data.choices || !data.choices.length) {
-      return res.status(500).json({
-        error: data.error?.message || "No response from model"
-      });
-    }
-
-    res.json({
-      reply: data.choices[0].message.content
-    });
+    res.json({ reply: data.choices[0].message.content });
 
   } catch (err) {
-    console.error("OpenRouter Error:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Network error" });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 GlenAI running on port ${PORT}`);
-});
+app.listen(PORT, () =>
+  console.log("🚀 GlenAI running on port", PORT)
+);
