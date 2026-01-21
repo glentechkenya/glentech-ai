@@ -1,85 +1,106 @@
+// public/script.js
 const chat = document.getElementById("chat");
 const input = document.getElementById("input");
+const panel = document.getElementById("panel");
 
 /* ===== PARTICLES ===== */
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
-let w,h,particles;
+let w, h;
 
-function resize(){
-  w=canvas.width=window.innerWidth;
-  h=canvas.height=window.innerHeight;
+function resize() {
+  w = canvas.width = innerWidth;
+  h = canvas.height = innerHeight;
 }
-window.onresize=resize;
 resize();
+onresize = resize;
 
-particles = Array.from({length:60},()=>({
-  x:Math.random()*w,
-  y:Math.random()*h,
-  r:Math.random()*2+1,
-  v:Math.random()*.4+.1
+const pts = Array.from({ length: 80 }, () => ({
+  x: Math.random() * w,
+  y: Math.random() * h,
+  r: Math.random() * 2 + 0.5,
+  v: 0.2 + Math.random() * 0.5
 }));
 
-function animate(){
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle="#00f7ff33";
-  particles.forEach(p=>{
-    p.y-=p.v;
-    if(p.y<0)p.y=h;
+(function animate() {
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "#00f7ff22";
+  pts.forEach(p => {
+    p.y -= p.v;
+    if (p.y < 0) p.y = h;
     ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
     ctx.fill();
   });
   requestAnimationFrame(animate);
+})();
+
+/* ===== MENU ===== */
+function toggleMenu() {
+  panel.style.display = panel.style.display === "flex" ? "none" : "flex";
 }
-animate();
+
+function openLink(i) {
+  const links = [
+    "https://chat.whatsapp.com/L6wlVwXs4cqEdvDdXs8pWO",
+    "https://whatsapp.com/channel/0029Vb5hEyp0gcfMx7GQfe0m"
+  ];
+  window.open(links[i - 1], "_blank");
+}
 
 /* ===== CHAT ===== */
-function addMessage(text, sender){
-  const div=document.createElement("div");
-  div.className="msg "+sender;
-  chat.appendChild(div);
+function typing(div, text) {
+  let i = 0;
+  const speed = () => Math.max(12, 28 + Math.sin(i / 6) * 10);
 
-  let i=0;
-  const stream=setInterval(()=>{
-    div.textContent+=text[i++];
-    chat.scrollTop=chat.scrollHeight;
-    if(i>=text.length){
-      clearInterval(stream);
-      if(sender==="bot"){
-        const c=document.createElement("div");
-        c.className="copy";
-        c.textContent="Copy";
-        c.onclick=()=>navigator.clipboard.writeText(text);
-        div.appendChild(c);
-      }
-    }
-  },15);
+  (function loop() {
+    div.textContent += text[i++] || "";
+    chat.scrollTop = chat.scrollHeight;
+    if (i < text.length) setTimeout(loop, speed());
+  })();
 }
 
-async function sendMessage(){
-  const msg=input.value.trim();
-  if(!msg) return;
-  addMessage(msg,"user");
-  input.value="";
+function add(text, who) {
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  chat.appendChild(d);
 
-  const res=await fetch("/api/chat",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ message:msg })
+  const clean = text.replace(/\*\*/g, "");
+  typing(d, clean);
+
+  if (who === "bot") {
+    const copy = document.createElement("button");
+    copy.className = "copy";
+    copy.textContent = "Copy";
+    copy.onclick = () => navigator.clipboard.writeText(clean);
+    d.appendChild(copy);
+  }
+}
+
+async function sendMessage() {
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  add(msg, "user");
+  input.value = "";
+
+  const dots = document.createElement("div");
+  dots.className = "msg bot";
+  dots.textContent = "…";
+  chat.appendChild(dots);
+
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: msg })
   });
 
-  const data=await res.json();
+  chat.removeChild(dots);
 
-  // occasional identity
-  let reply=data.reply;
-  if(Math.random()<0.25){
-    reply="I am GlenAI. "+reply;
-  }
+  const data = await res.json();
+  let reply = data.reply;
 
-  addMessage(reply,"bot");
-}
+  if (Math.random() < 0.3) reply = "I am GlenAI. " + reply;
 
-function clearChat(){
-  chat.innerHTML="";
+  add(reply, "bot");
 }
