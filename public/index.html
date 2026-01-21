@@ -1,151 +1,35 @@
+<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>GlenAI</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-:root{
-  --neon:#00f7ff;
-  --bg:#030406;
-  --glass:rgba(255,255,255,.04);
-}
-
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:system-ui;
-  background:radial-gradient(circle at top,#0a1a22,var(--bg));
-  color:#fff;
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
-
-/* ===== PARTICLES ===== */
-canvas{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-}
-
-/* ===== HEADER ===== */
-header{
-  padding:16px;
-  text-align:center;
-  border-bottom:1px solid #0ff3;
-  background:linear-gradient(180deg,#050b0f,#030406);
-}
-
-header h1{
-  margin:0;
-  font-size:22px;
-  letter-spacing:2px;
-  color:var(--neon);
-  text-shadow:0 0 15px var(--neon);
-}
-
-/* ===== CHAT ===== */
-#chat{
-  flex:1;
-  padding:16px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-
-.msg{
-  max-width:85%;
-  padding:14px;
-  border-radius:16px;
-  animation:fade .25s;
-  position:relative;
-}
-
-.user{
-  align-self:flex-end;
-  background:linear-gradient(135deg,#00f7ff,#00bcd4);
-  color:#000;
-}
-
-.bot{
-  align-self:flex-start;
-  background:var(--glass);
-  border:1px solid #0ff3;
-  backdrop-filter:blur(10px);
-}
-
-/* copy button */
-.copy{
-  position:absolute;
-  right:10px;
-  bottom:6px;
-  font-size:12px;
-  opacity:.5;
-  cursor:pointer;
-}
-.copy:hover{opacity:1}
-
-/* ===== FOOTER ===== */
-footer{
-  display:flex;
-  gap:8px;
-  padding:14px;
-  border-top:1px solid #0ff3;
-  background:#030406;
-}
-
-input{
-  flex:1;
-  padding:14px;
-  border-radius:12px;
-  background:#000;
-  border:1px solid #0ff3;
-  color:#fff;
-  font-size:16px;
-}
-
-button{
-  padding:14px 18px;
-  border-radius:12px;
-  border:none;
-  background:var(--neon);
-  font-weight:600;
-  cursor:pointer;
-}
-
-.clear{
-  background:#111;
-  color:#fff;
-  border:1px solid #333;
-}
-
-@keyframes fade{
-  from{opacity:0;transform:translateY(4px)}
-  to{opacity:1}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GlenAI</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
-
 <body>
-<canvas id="particles"></canvas>
+  <canvas id="particles"></canvas>
 
-<header>
-  <h1>GLENAI</h1>
-</header>
+  <header class="header">
+    <div class="title">GLENAI</div>
+    <div class="subtitle">developed by glentechkenya</div>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  </header>
 
-<div id="chat"></div>
+  <!-- MENU (LINKS ONLY) -->
+  <div id="panel">
+    <button onclick="openLink(1)">Join our WhatsApp Group</button>
+    <button onclick="openLink(2)">Join our WhatsApp Channel</button>
+  </div>
 
-<footer>
-  <button class="clear" onclick="clearChat()">Clear</button>
-  <input id="input" placeholder="Ask GlenAI…" />
-  <button onclick="sendMessage()">Send</button>
-</footer>
+  <main id="chat"></main>
 
-<script src="script.js"></script>
+  <footer class="input-bar">
+    <input id="input" placeholder="Message GlenAI..." />
+    <button onclick="sendMessage()">➤</button>
+    <button onclick="chat.innerHTML=''">Clear</button>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
