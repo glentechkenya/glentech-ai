@@ -22,13 +22,13 @@ async function sendMessage() {
   chat.appendChild(thinking);
 
   try {
-    const response = await fetch("/api/chat", {
+    const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message })
     });
 
-    const data = await response.json();
+    const data = await res.json();
     chat.removeChild(thinking);
 
     if (data.error) {
