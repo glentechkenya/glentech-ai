@@ -2,42 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GLENAI</title>
+  <title>GlenAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+<!-- PARTICLES -->
 <canvas id="particles"></canvas>
-<div class="scanlines"></div>
 
-<!-- BOOT SCREEN -->
-<div id="boot" class="boot">
-  <div class="boot-text">
-    initializing secure channel<br>
-    loading neural core<br>
-    glenai online
-  </div>
-</div>
-
-<div class="app hidden" id="app">
+<div class="app">
 
   <!-- HEADER -->
-  <div class="header">
-    <div class="title">GLEN<span>AI</span></div>
-    <div class="status">
-      <span class="dot"></span> secure channel active
-    </div>
-    <div class="menu-btn" onclick="toggleMenu()">≡</div>
-  </div>
+  <header>
+    <div class="logo">GLEN<span>AI</span></div>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  </header>
 
   <!-- MENU -->
   <div id="menu" class="menu">
-    <div class="menu-title">inner circle</div>
-    <button onclick="openGroup()">private group</button>
-    <button onclick="openChannel()">broadcast channel</button>
-    <button onclick="toggleVoice()">voice: <span id="voiceState">on</span></button>
-    <button onclick="toggleMenu()">close</button>
+    <a href="https://chat.whatsapp.com/L6wlVwXs4cqEdvDdXs8pWO" target="_blank">
+      Community Group
+    </a>
+    <a href="https://whatsapp.com/channel/0029VbBz7he0G0XhFAUWt70P" target="_blank">
+      Official Channel
+    </a>
   </div>
 
   <!-- CHAT -->
@@ -45,13 +34,13 @@
 
   <!-- TYPING -->
   <div id="typing" class="typing">
-    signal detected<span>.</span><span>.</span><span>.</span>
+    processing<span>.</span><span>.</span><span>.</span>
   </div>
 
   <!-- INPUT -->
-  <div class="input-bar">
-    <input id="text" placeholder="Speak." autocomplete="off" />
-    <button onclick="send()">◼︎</button>
+  <div class="input">
+    <input id="text" placeholder="Transmit message" />
+    <button onclick="send()">➤</button>
   </div>
 
 </div>
