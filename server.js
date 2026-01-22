@@ -7,7 +7,6 @@ app.use(express.static("public"));
 
 const openrouter = new OpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
   defaultHeaders: {
     "HTTP-Referer": "https://developersweb-five.vercel.app/",
     "X-Title": "GlenAI by GlenTechKenya"
@@ -28,7 +27,7 @@ app.post("/chat", async (req, res) => {
         {
           role: "system",
           content:
-            "You are GlenAI 🤖✨ — friendly, modern, helpful. Use emojis naturally. Respond clearly like ChatGPT."
+            "You are GlenAI 🤖✨. Friendly, modern, helpful. Respond like ChatGPT and use emojis naturally."
         },
         {
           role: "user",
@@ -44,9 +43,9 @@ app.post("/chat", async (req, res) => {
     res.json({ reply });
 
   } catch (err) {
-    console.error("OpenRouter SDK error:", err);
+    console.error("❌ OpenRouter error:", err);
     res.json({
-      reply: "AI backend error. Check OpenRouter key or model access."
+      reply: "AI backend error. Check model access or API key."
     });
   }
 });
