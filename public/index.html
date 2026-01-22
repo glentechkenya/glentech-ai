@@ -1,36 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>GlenAI</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<canvas id="particles"></canvas>
-
-<header class="top">
-  <div class="logo">
-    <span class="glow">GLENAI</span>
-    <small>developed by glentechkenya</small>
+<div class="chat">
+  <div class="header">
+    <span class="lock">🔒</span> End-to-End Encrypted
   </div>
-  <button class="menu" onclick="toggleMenu()">☰</button>
-</header>
 
-<div id="panel">
-  <button onclick="openLink(1)">Join our WhatsApp Group</button>
-  <button onclick="openLink(2)">Join our WhatsApp Channel</button>
+  <div id="messages"></div>
+
+  <div class="typing" id="typing">GlenAI is typing<span>.</span><span>.</span><span>.</span></div>
+
+  <div class="input">
+    <input id="text" placeholder="Message GlenAI">
+    <button onclick="send()">➤</button>
+  </div>
 </div>
 
-<main id="chat"></main>
-
-<footer class="bar">
-  <input id="input" placeholder="Message GlenAI…" />
-  <button onclick="sendMessage()">➤</button>
-  <button onclick="chat.innerHTML=''">✖</button>
-</footer>
-
-<script src="script.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
