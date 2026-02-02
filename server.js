@@ -1,9 +1,8 @@
 import express from "express";
 import axios from "axios";
-import dotenv from "dotenv";
 
-dotenv.config();
 const app = express();
+app.use(express.static("public"));
 app.use(express.json());
 
 // Gemini chat endpoint
@@ -31,4 +30,4 @@ app.post("/chat", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Glentech Gemini endpoint running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Glentech AI running on port ${PORT}`));
