@@ -1,44 +1,34 @@
 import express from "express";
-import cors from "cors";
-import OpenAI from "openai";
+import axios from "axios";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
-app.use(cors());
 app.use(express.json());
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1"
-});
-
+// Gemini chat endpoint
 app.post("/chat", async (req, res) => {
+  const { message } = req.body;
+
   try {
-    const { message } = req.body;
+    const response = await axios.post(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      {
+        contents: [{ parts: [{ text: message }]}]
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+        params: { key: process.env.GEMINI_API_KEY }
+      }
+    );
 
-    const completion = await openai.chat.completions.create({
-      model: "mistralai/mistral-7b-instruct:free",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are GlenAI 🤖✨ — friendly, futuristic, helpful. Reply like ChatGPT and use emojis naturally."
-        },
-        { role: "user", content: message }
-      ]
-    });
-
-    res.json({
-      reply: completion.choices[0].message.content
-    });
-
+    const reply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No reply";
+    res.json({ reply });
   } catch (err) {
-    console.error("OPENROUTER ERROR:", err.message);
-    res.status(500).json({
-      reply: "❌ AI backend error. Model or API key issue."
-    });
+    console.error("Gemini API error:", err.message);
+    res.status(500).json({ reply: "❌ Error contacting Gemini API." });
   }
 });
 
-app.listen(3000, () => {
-  console.log("✅ GlenAI backend running on port 3000");
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Glentech Gemini endpoint running on port ${PORT}`));
