@@ -1,7 +1,7 @@
 {
   "name": "glentech-ai",
   "version": "1.0.0",
-  "description": "Glentech AI - Futuristic Chat Website",
+  "description": "Glentech AI - Futuristic WhatsApp-style Chat",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
